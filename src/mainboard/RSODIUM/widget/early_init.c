@@ -32,10 +32,12 @@ void bootblock_mainboard_early_init(void)
 	winbond_enable_serial(SERIAL_DEV, CONFIG_TTYS0_BASE);
 }
 
+#if !CONFIG(USE_NATIVE_RAMINIT)
 void mainboard_fill_pei_data(struct pei_data *pei_data)
 {
 	/* Only needed for MRC blob, can be empty for native RAM init */
 }
+#endif
 
 void mainboard_early_init(bool s3resume)
 {

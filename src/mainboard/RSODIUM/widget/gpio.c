@@ -231,12 +231,6 @@ static const struct pch_gpio_set2 pch_gpio_set2_level = {
 static const struct pch_gpio_set2 pch_gpio_set2_reset = {
 };
 
-static const struct pch_gpio_set2 pch_gpio_set2_invert = {
-};
-
-static const struct pch_gpio_set2 pch_gpio_set2_blink = {
-};
-
 static const struct pch_gpio_set3 pch_gpio_set3_mode = {
 	.gpio64 = GPIO_MODE_NATIVE,
 	.gpio65 = GPIO_MODE_NATIVE,
@@ -285,12 +279,6 @@ static const struct pch_gpio_set3 pch_gpio_set3_level = {
 static const struct pch_gpio_set3 pch_gpio_set3_reset = {
 };
 
-static const struct pch_gpio_set3 pch_gpio_set3_invert = {
-};
-
-static const struct pch_gpio_set3 pch_gpio_set3_blink = {
-};
-
 const struct pch_gpio_map mainboard_gpio_map = {
 	.set1 = {
 		.mode		= &pch_gpio_set1_mode,
@@ -305,15 +293,11 @@ const struct pch_gpio_map mainboard_gpio_map = {
 		.direction	= &pch_gpio_set2_direction,
 		.level		= &pch_gpio_set2_level,
 		.reset		= &pch_gpio_set2_reset,
-		.invert		= &pch_gpio_set2_invert,
-		.blink		= &pch_gpio_set2_blink,
 	},
 	.set3 = {
 		.mode		= &pch_gpio_set3_mode,
 		.direction	= &pch_gpio_set3_direction,
 		.level		= &pch_gpio_set3_level,
 		.reset		= &pch_gpio_set3_reset,
-		.invert		= &pch_gpio_set3_invert,
-		.blink		= &pch_gpio_set3_blink,
 	},
 };
