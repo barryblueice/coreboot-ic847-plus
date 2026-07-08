@@ -1,0 +1,8 @@
+## SPDX-License-Identifier: GPL-2.0-only
+
+if VENDOR_RSODIUM
+
+source "src/mainboard/RSODIUM/*/Kconfig.name"
+source "src/mainboard/RSODIUM/*/Kconfig"
+
+endif
