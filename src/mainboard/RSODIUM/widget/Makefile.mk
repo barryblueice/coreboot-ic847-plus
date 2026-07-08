@@ -7,5 +7,4 @@ romstage-y += gpio.c
 romstage-y += early_init.c
 
 ramstage-y += mainboard.c
-ramstage-y += hda_verb.c
 ramstage-$(CONFIG_MAINBOARD_USE_LIBGFXINIT) += gma-mainboard.ads

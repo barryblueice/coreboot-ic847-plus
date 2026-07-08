@@ -1,7 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 
 #include <device/device.h>
-#include <device/pci_ops.h>
 #include <arch/io.h>
 #include <console/console.h>
 #include <option.h>
@@ -10,12 +9,10 @@
 static void mainboard_enable(struct device *dev)
 {
 	unsigned int vr_hot;
-	u16 gpio_base;
+	u16 gpio_base = DEFAULT_GPIOBASE;
 	u32 val;
 
 	vr_hot = get_uint_option("vr_hot", 0);
-
-	gpio_base = pci_read_config16(PCH_LPC_DEV, GPIO_BASE) & 0xfffc;
 
 	if (vr_hot) {
 		val = inl(gpio_base + 0x04);

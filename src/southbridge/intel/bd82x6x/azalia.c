@@ -13,6 +13,7 @@
 #include "chip.h"
 #include "pch.h"
 
+#if CONFIG(AZALIA_HDA_CODEC_SUPPORT)
 static int codec_detect(u8 *base)
 {
 	u8 reg8;
@@ -37,13 +38,16 @@ no_codec:
 	printk(BIOS_DEBUG, "Azalia: No codec!\n");
 	return 0;
 }
+#endif
 
 static void azalia_init(struct device *dev)
 {
 	u8 *base;
 	struct resource *res;
-	u32 codec_mask;
 	u32 reg32;
+#if CONFIG(AZALIA_HDA_CODEC_SUPPORT)
+	u32 codec_mask;
+#endif
 
 	res = probe_resource(dev, PCI_BASE_ADDRESS_0);
 	if (!res)
@@ -107,12 +111,14 @@ static void azalia_init(struct device *dev)
 	// Docking not supported
 	pci_and_config8(dev, 0x4d, (u8)~(1 << 7)); // Docking Status
 
+#if CONFIG(AZALIA_HDA_CODEC_SUPPORT)
 	codec_mask = codec_detect(base);
 
 	if (codec_mask) {
 		printk(BIOS_DEBUG, "Azalia: codec_mask = %02x\n", codec_mask);
 		azalia_codecs_init(base, codec_mask);
 	}
+#endif
 
 	/* Enable dynamic clock gating */
 	pci_update_config8(dev, 0x43, ~0x07, (1 << 2) | (1 << 0));
