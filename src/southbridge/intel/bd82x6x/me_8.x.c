@@ -75,10 +75,15 @@ static me_bios_path intel_me_path(struct device *dev)
 	/* Check Current Operation Mode */
 	switch (hfs.operation_mode) {
 	case ME_HFS_MODE_NORMAL:
+	case ME_HFS_MODE_OVER_JMPR:
+		/*
+		 * Security Override via Jumper is a hardware strap mode.
+		 * The ME firmware is still functional in this mode, so
+		 * treat it as normal and continue with ME initialization.
+		 */
 		break;
 	case ME_HFS_MODE_DEBUG:
 	case ME_HFS_MODE_DIS:
-	case ME_HFS_MODE_OVER_JMPR:
 	case ME_HFS_MODE_OVER_MEI:
 	default:
 		path = ME_DISABLE_BIOS_PATH;

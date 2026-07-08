@@ -76,8 +76,18 @@ void intel_me_finalize_smm(void)
 	/* Abort and leave device alone if not normal mode */
 	if (hfs.fpt_bad ||
 	    hfs.working_state != ME_HFS_CWS_NORMAL ||
-	    hfs.operation_mode != ME_HFS_MODE_NORMAL)
+	    (hfs.operation_mode != ME_HFS_MODE_NORMAL &&
+	     hfs.operation_mode != ME_HFS_MODE_OVER_JMPR))
 		return;
+
+	/* Skip EOP if ME firmware hasn't finished initialization.
+	 * In "Security Override via Jumper" mode the ME may remain in
+	 * Bring-up state with fw_init_complete=0.  Sending EOP to a ME
+	 * that hasn't completed its boot causes a hardware reset. */
+	if (!hfs.fw_init_complete) {
+		printk(BIOS_INFO, "ME: Firmware init not complete, skipping EOP\n");
+		goto disable_mei;
+	}
 
 	/* Try to send EOP command so ME stops accepting other commands */
 	const u16 did = pci_read_config16(PCH_ME_DEV, PCI_DEVICE_ID);
@@ -92,6 +102,7 @@ void intel_me_finalize_smm(void)
 		printk(BIOS_ERR, "No finalize handler for ME %04x.\n", did);
 	}
 
+disable_mei:
 	/* Make sure IO is disabled */
 	pci_and_config16(PCH_ME_DEV, PCI_COMMAND,
 			 ~(PCI_COMMAND_MASTER | PCI_COMMAND_MEMORY | PCI_COMMAND_IO));

@@ -598,7 +598,7 @@ static void gma_func0_init(struct device *dev)
 	/* Post VBIOS init */
 	gma_pm_init_post_vbios(dev);
 
-	int vga_disable = (pci_read_config16(dev, GGC) & 2) >> 1;
+	int vga_disable = (pci_read_config16(pcidev_on_root(0, 0), GGC) & 2) >> 1;
 
 	/* Running graphics init on S3 breaks Linux drm driver. */
 	if (!acpi_is_wakeup_s3() &&
@@ -608,9 +608,11 @@ static void gma_func0_init(struct device *dev)
 			       "IGD is not decoding legacy VGA MEM and IO: skipping NATIVE graphic init\n");
 		} else {
 			/* This should probably run before post VBIOS init. */
-			printk(BIOS_SPEW, "Initializing VGA without OPROM.\n");
+			printk(BIOS_INFO, "Initializing VGA without OPROM.\n");
 			int lightup_ok;
 			gma_gfxinit(&lightup_ok);
+			printk(BIOS_INFO, "libgfxinit result: %s\n",
+			       lightup_ok ? "SUCCESS" : "FAILURE");
 			if (lightup_ok)
 				gfx_set_init_done(1);
 		}
