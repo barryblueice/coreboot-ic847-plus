@@ -16,7 +16,6 @@ site-local
 
 *.\#
 *.a
-*.bin
 *.debug
 !Kconfig.debug
 *.elf

@@ -2,21 +2,19 @@
 
 #include <bootblock_common.h>
 #include <device/pci_ops.h>
+#include <device/pnp_ops.h>
 #include <northbridge/intel/sandybridge/sandybridge.h>
 #include <southbridge/intel/bd82x6x/pch.h>
+#include <superio/winbond/common/winbond.h>
+#include <superio/winbond/w83627dhg/w83627dhg.h>
+
+#define SIO_PORT 0x2e
+#define SERIAL_DEV PNP_DEV(SIO_PORT, W83627DHG_SP1)
 
 void bootblock_mainboard_early_init(void)
 {
-	/*
-	 * Early GPIO and board-specific setup.
-	 * GPIOs are already programmed by the common GPIO setup
-	 * (setup_pch_gpios), called before this hook.
-	 *
-	 * Add any board-specific early init here:
-	 * - Super I/O early config
-	 * - EC early init (e.g. EC communication setup)
-	 * - Special GPIO toggling
-	 */
+	/* Enable Super I/O serial port for early console output */
+	winbond_enable_serial(SERIAL_DEV, CONFIG_TTYS0_BASE);
 }
 
 void mainboard_fill_pei_data(struct pei_data *pei_data)
