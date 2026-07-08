@@ -1,0 +1,46 @@
+CPU: ID 0x206a7, Processor Type 0x0, Family 0x6, Model 0x2a, Stepping 0x7
+Northbridge: 8086:0104 (2nd generation (Sandy Bridge family) Core Processor (Mobile))
+Southbridge: 8086:1e56 (QS77)
+IGD: 8086:0126 (Intel(R) HD 3000 Graphics)
+
+============= SPI / BIOS CNTL =============
+
+BIOS_CNTL = 0x0008 (IO)
+
+0x0000 = BIOSWE - write enable
+0x0000 = BLE - lock enable
+0x0002 = SPI Read configuration
+0x0000 = TopSwapStatus
+0x0000 = SMM BIOS Write Protect Disable
+0x0000 = reserved
+
+============= SPI Bar ==============
+
+0x07ff0580 = BFPR - BIOS Flash primary region
+0x0000c008 = HSFSTS - Hardware Sequencing Flash Status
+0x00000000 = HSFCTL - Hardware Sequencing Flash Control
+0x0058400a = FADDR - Flash Address
+0x00000000 = Reserved
+0x74524152 = FDATA0
+0x0000ffff = FRACC - Flash Region Access Permissions
+0x00000000 = Flash Region 0
+0x07ff0580 = Flash Region 1
+0x057f0001 = Flash Region 2
+0x00001fff = Flash Region 3
+0x00001fff = Flash Region 4
+0x00000000 = FPR0 Flash Protected Range 0
+0x00000000 = FPR0 Flash Protected Range 1
+0x00000000 = FPR0 Flash Protected Range 2
+0x00000000 = FPR0 Flash Protected Range 3
+0x00000000 = FPR0 Flash Protected Range 4
+0x00000080 = SSFSTS - Software Sequencing Flash Status
+0x00000006 = PREOP - Prefix opcode Configuration
+0x0000043b = OPTYPE - Opcode Type Configuration
+0x0000019f05200302 = OPMENU - Opcode Menu Configuration
+0x00000000 = BBAR - BIOS Base Address Configuration
+0x00001000 = FDOC - Flash Descriptor Observability Control
+0x00000000 = Reserved
+0x00000007 = AFC - Additional Flash Control
+0x00802005 = LVSCC - Host Lower Vendor Specific Component Capabilities
+0x00002005 = UVSCC - Host Upper Vendor Specific Component Capabilities
+0x00000000 = FPB - Flash Partition Boundary
