@@ -1,0 +1,7 @@
+## SPDX-License-Identifier: GPL-2.0-only
+
+config BOARD_RSODIUM_WIDGET
+	bool "IC847-PLUS"
+	help
+	  R-SODIUM Technology IC847-PLUS mainboard with Intel QS77
+	  Panther Point PCH and Sandy Bridge / Ivy Bridge CPU.
