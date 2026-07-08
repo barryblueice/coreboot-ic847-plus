@@ -275,6 +275,32 @@ int spd_decode_ddr3(struct dimm_attr_ddr3_st *dimm, spd_ddr3_raw_data spd)
 	dimm->tRTP = spd[27] * mtb;
 	/* Minimum Four Activate Window Delay Time (tFAWmin) */
 	dimm->tFAW = (((spd[28] & 0x0f) << 8) + spd[29]) * mtb;
+
+	/*
+	 * Some SODIMMs have incomplete SPD data (timing fields = 0).
+	 * Apply JEDEC minimum fallbacks for DDR3-1066/1333/1600.
+	 * All values in picoseconds. mtb = 125ps for DDR3.
+	 */
+	if (!dimm->tRCD && spd[18] == 0)
+		dimm->tRCD = dimm->tAA;
+	if (!dimm->tRP && spd[20] == 0)
+		dimm->tRP = dimm->tAA;
+	if (!dimm->tRAS && spd[22] == 0)
+		dimm->tRAS = 35000;		/* 35ns */
+	if (!dimm->tRC && spd[23] == 0)
+		dimm->tRC = dimm->tRAS + dimm->tRP;
+	if (!dimm->tRFC && spd[24] == 0 && spd[25] == 0)
+		dimm->tRFC = 160000;		/* 160ns for 4Gb */
+	if (!dimm->tWR && spd[17] == 0)
+		dimm->tWR = 15000;		/* 15ns */
+	if (!dimm->tWTR && spd[26] == 0)
+		dimm->tWTR = 7500;		/* 7.5ns */
+	if (!dimm->tRTP && spd[27] == 0)
+		dimm->tRTP = 7500;		/* 7.5ns */
+	if (!dimm->tFAW && spd[28] == 0 && spd[29] == 0)
+		dimm->tFAW = 40000;		/* 40ns */
+	if (!dimm->tRRD && spd[19] == 0)
+		dimm->tRRD = 6000;		/* 6ns */
 	/* Minimum CAS Write Latency Time (tCWLmin)
 	 * - not present in standard SPD */
 	dimm->tCWL = 0;

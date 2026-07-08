@@ -61,33 +61,7 @@ chip northbridge/intel/sandybridge
 			device ref ehci1 on end
 			device ref pci_bridge off end
 
-			device ref lpc on
-				chip superio/winbond/w83627dhg
-					device pnp 2e.0 off end		# Floppy
-					device pnp 2e.1 off end		# Parallel port
-					device pnp 2e.2 on		# COM1
-						io 0x60 = 0x3f8
-						irq 0x70 = 4
-					end
-					device pnp 2e.3 off end		# COM2
-					device pnp 2e.5 on		# PS/2 Keyboard
-						io 0x60 = 0x60
-						io 0x62 = 0x64
-						irq 0x70 = 1
-						irq 0x72 = 12
-					end
-					device pnp 2e.6 off end		# SPI
-					device pnp 2e.7 off end		# GPIO6
-					device pnp 2e.8 off end		# WDTO_PLED
-					device pnp 2e.9 off end		# GPIO2/3/4/5
-					device pnp 2e.a off end		# ACPI
-					device pnp 2e.b on		# HWM
-						io 0x60 = 0x290
-						irq 0x70 = 0
-					end
-					device pnp 2e.c off end		# PECI/SST
-				end
-			end
+			device ref lpc on end
 		end
 	end
 end
