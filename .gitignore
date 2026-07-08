@@ -28,6 +28,7 @@ site-local
 /*.rom
 .test
 .dependencies
+*.log
 
 # Development friendly files
 tags
