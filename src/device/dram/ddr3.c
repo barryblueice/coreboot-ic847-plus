@@ -279,28 +279,28 @@ int spd_decode_ddr3(struct dimm_attr_ddr3_st *dimm, spd_ddr3_raw_data spd)
 	/*
 	 * Some SODIMMs have incomplete SPD data (timing fields = 0).
 	 * Apply JEDEC minimum fallbacks for DDR3-1066/1333/1600.
-	 * All values in picoseconds. mtb = 125ps for DDR3.
+	 * All values are in 1/256 ns units (1 ns = 256).
 	 */
 	if (!dimm->tRCD && spd[18] == 0)
 		dimm->tRCD = dimm->tAA;
 	if (!dimm->tRP && spd[20] == 0)
 		dimm->tRP = dimm->tAA;
 	if (!dimm->tRAS && spd[22] == 0)
-		dimm->tRAS = 35000;		/* 35ns */
+		dimm->tRAS = 35 * 256;		/* 35ns */
 	if (!dimm->tRC && spd[23] == 0)
 		dimm->tRC = dimm->tRAS + dimm->tRP;
 	if (!dimm->tRFC && spd[24] == 0 && spd[25] == 0)
-		dimm->tRFC = 160000;		/* 160ns for 4Gb */
+		dimm->tRFC = 160 * 256;		/* 160ns for 4Gb */
 	if (!dimm->tWR && spd[17] == 0)
-		dimm->tWR = 15000;		/* 15ns */
+		dimm->tWR = 15 * 256;		/* 15ns */
 	if (!dimm->tWTR && spd[26] == 0)
-		dimm->tWTR = 7500;		/* 7.5ns */
+		dimm->tWTR = 15 * 128;		/* 7.5ns */
 	if (!dimm->tRTP && spd[27] == 0)
-		dimm->tRTP = 7500;		/* 7.5ns */
+		dimm->tRTP = 15 * 128;		/* 7.5ns */
 	if (!dimm->tFAW && spd[28] == 0 && spd[29] == 0)
-		dimm->tFAW = 40000;		/* 40ns */
+		dimm->tFAW = 40 * 256;		/* 40ns */
 	if (!dimm->tRRD && spd[19] == 0)
-		dimm->tRRD = 6000;		/* 6ns */
+		dimm->tRRD = 6 * 256;		/* 6ns */
 	/* Minimum CAS Write Latency Time (tCWLmin)
 	 * - not present in standard SPD */
 	dimm->tCWL = 0;
@@ -528,28 +528,28 @@ int spd_xmp_decode_ddr3(struct dimm_attr_ddr3_st *dimm, spd_ddr3_raw_data spd,
 	/*
 	 * Some SODIMMs have incomplete XMP data (timing fields = 0).
 	 * Apply JEDEC minimum fallbacks if XMP values are zero.
-	 * All values in picoseconds.
+	 * All values are in 1/256 ns units (1 ns = 256).
 	 */
 	if (!dimm->tRCD)
 		dimm->tRCD = dimm->tAA;
 	if (!dimm->tRP)
 		dimm->tRP = dimm->tAA;
 	if (!dimm->tRAS)
-		dimm->tRAS = 35000;		/* 35ns */
+		dimm->tRAS = 35 * 256;		/* 35ns */
 	if (!dimm->tRC)
 		dimm->tRC = dimm->tRAS + dimm->tRP;
 	if (!dimm->tRFC)
-		dimm->tRFC = 160000;		/* 160ns for 4Gb */
+		dimm->tRFC = 160 * 256;		/* 160ns for 4Gb */
 	if (!dimm->tWR)
-		dimm->tWR = 15000;		/* 15ns */
+		dimm->tWR = 15 * 256;		/* 15ns */
 	if (!dimm->tWTR)
-		dimm->tWTR = 7500;		/* 7.5ns */
+		dimm->tWTR = 15 * 128;		/* 7.5ns */
 	if (!dimm->tRTP)
-		dimm->tRTP = 7500;		/* 7.5ns */
+		dimm->tRTP = 15 * 128;		/* 7.5ns */
 	if (!dimm->tFAW)
-		dimm->tFAW = 40000;		/* 40ns */
+		dimm->tFAW = 40 * 256;		/* 40ns */
 	if (!dimm->tRRD)
-		dimm->tRRD = 6000;		/* 6ns */
+		dimm->tRRD = 6 * 256;		/* 6ns */
 
 	return ret;
 }
