@@ -525,6 +525,32 @@ int spd_xmp_decode_ddr3(struct dimm_attr_ddr3_st *dimm, spd_ddr3_raw_data spd,
 	/* System CMD Rate Mode */
 	dimm->tCMD = xmp[23] * mtb;
 
+	/*
+	 * Some SODIMMs have incomplete XMP data (timing fields = 0).
+	 * Apply JEDEC minimum fallbacks if XMP values are zero.
+	 * All values in picoseconds.
+	 */
+	if (!dimm->tRCD)
+		dimm->tRCD = dimm->tAA;
+	if (!dimm->tRP)
+		dimm->tRP = dimm->tAA;
+	if (!dimm->tRAS)
+		dimm->tRAS = 35000;		/* 35ns */
+	if (!dimm->tRC)
+		dimm->tRC = dimm->tRAS + dimm->tRP;
+	if (!dimm->tRFC)
+		dimm->tRFC = 160000;		/* 160ns for 4Gb */
+	if (!dimm->tWR)
+		dimm->tWR = 15000;		/* 15ns */
+	if (!dimm->tWTR)
+		dimm->tWTR = 7500;		/* 7.5ns */
+	if (!dimm->tRTP)
+		dimm->tRTP = 7500;		/* 7.5ns */
+	if (!dimm->tFAW)
+		dimm->tFAW = 40000;		/* 40ns */
+	if (!dimm->tRRD)
+		dimm->tRRD = 6000;		/* 6ns */
+
 	return ret;
 }
 
