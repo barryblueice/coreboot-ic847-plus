@@ -46,3 +46,5 @@ tarballs/
 *~
 *.kate-swp
 *.kdev4
+coreboot-fail.bin
+coreboot-success.bin
