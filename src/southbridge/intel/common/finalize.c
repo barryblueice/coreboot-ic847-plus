@@ -15,11 +15,13 @@ void intel_pch_finalize_smm(void)
 {
 	const pci_devfn_t lpc_dev = PCI_DEV(0, 0x1f, 0);
 
-	/* Lock SPIBAR */
-	RCBA32_OR(0x3804, (1 << 15));
+	/* Locking SPIBAR (FLOCKDN) prevents the SMM SmmStore variable write
+	 * path from programming the SPI flash on this board, which makes the
+	 * EDK2 payload fail to initialise its non-volatile variable store
+	 * ("Firmware Volume for Variable Store is corrupted"). Keep the SPI
+	 * opcode registers unlocked so SMM can still service SmmStore writes. */
 
 	if (CONFIG(SPI_FLASH_SMM))
-		/* Re-init SPI driver to handle locked BAR */
 		spi_init();
 
 	/* TCLOCKDN: TC Lockdown */
