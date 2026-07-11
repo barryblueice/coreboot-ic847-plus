@@ -49,6 +49,9 @@ chip northbridge/intel/sandybridge
 			device ref ehci2 on end
 			device ref hda off end
 
+			device ref sata1 on end
+			device ref sata2 off end
+
 			device ref pcie_rp1 on end
 			device ref pcie_rp2 on end
 			device ref pcie_rp3 on end
