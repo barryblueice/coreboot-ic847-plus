@@ -299,7 +299,7 @@ static void generate_P_state_entries(int core, int cores_per_package)
 
 		/* Add entry for Turbo ratio */
 		acpigen_write_PSS_package(
-			ratio_turbo * SANDYBRIDGE_BCLK,	/*MHz*/
+			clock_max + 1,		/*MHz*/
 			power_max,		/*mW*/
 			PSS_LATENCY_TRANSITION,	/*lat1*/
 			PSS_LATENCY_BUSMASTER,	/*lat2*/
