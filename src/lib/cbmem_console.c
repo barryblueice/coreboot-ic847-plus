@@ -3,6 +3,7 @@
 #include <console/cbmem_console.h>
 #include <console/console.h>
 #include <console/uart.h>
+#include <bootstate.h>
 #include <cbmem.h>
 #include <symbols.h>
 #include <types.h>
@@ -223,3 +224,16 @@ void cbmem_dump_console(void)
 
 	console_paused = false;
 }
+
+#if CONFIG(CONSOLE_CBMEM_DUMP_PREVIOUS_BOOT)
+static void dump_previous_boot_console(void *unused)
+{
+	printk(BIOS_NOTICE,
+	       "\n\n===== BEGIN PREVIOUS BOOT CBMEM CONSOLE DUMP =====\n");
+	cbmem_dump_console();
+	printk(BIOS_NOTICE,
+	       "===== END PREVIOUS BOOT CBMEM CONSOLE DUMP =====\n\n");
+}
+
+BOOT_STATE_INIT_ENTRY(BS_PRE_DEVICE, BS_ON_ENTRY, dump_previous_boot_console, NULL);
+#endif

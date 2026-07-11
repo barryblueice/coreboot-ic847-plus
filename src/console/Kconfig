@@ -266,6 +266,22 @@ config CONSOLE_CBMEM_PRINT_PRE_BOOTBLOCK_CONTENTS
 	  inaccessible until the boot processes gets into the payload or OS.
 	  This feature will dump the pre-bootblock CBMEM console immediately
 	  after the bootblock console is initialized.
+
+config CONSOLE_CBMEM_DUMP_PREVIOUS_BOOT
+	bool "Dump previous boot's CBMEM console to all consoles"
+	default n
+	depends on CONSOLE_CBMEM
+	help
+	  On systems without a serial console (e.g. only SPI flash console),
+	  the payload's CBMEM log is lost when the payload hangs and the board
+	  is reset. When enabled, coreboot dumps the previous boot's CBMEM
+	  console (which survives a warm reset and is copied into the current
+	  CBMEM console) to all active consoles early in ramstage. This is
+	  useful to recover the payload log of a hanging payload such as EDK2
+	  when no UART is available.
+
+	  Note: this writes the full previous log to the SPI flash console on
+	  every boot, causing extra flash wear. Disable once debugging is done.
 endif
 
 config CONSOLE_SPI_FLASH

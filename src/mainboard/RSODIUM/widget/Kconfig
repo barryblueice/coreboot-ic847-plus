@@ -26,4 +26,15 @@ config MAINBOARD_PART_NUMBER
 config GFX_GMA_PANEL_1_PORT
 	default "Disabled"
 
+# Use a custom FMAP with an enlarged CONSOLE region (2MB) so the full
+# EDK2 payload cbmem log can be captured to SPI flash for debugging.
+config FMDFILE
+	default "src/mainboard/$(CONFIG_MAINBOARD_DIR)/board.fmd"
+
+config CONSOLE_SPI_FLASH_BUFFER_SIZE
+	default 0x200000
+
+config CONSOLE_CBMEM_BUFFER_SIZE
+	default 0x200000
+
 endif

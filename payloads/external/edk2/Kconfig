@@ -191,7 +191,6 @@ config EDK2_BOOT_TIMEOUT
 
 config EDK2_CBMEM_LOGGING
 	bool "Enable edk2 logging to CBMEM"
-	depends on EDK2_RELEASE
 	help
 	  Select this option if you want to enable edk2 logging to CBMEM.
 	  You will want to increase the default cbmem buffer size when selecting
