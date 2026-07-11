@@ -48,9 +48,6 @@ is
 
       fb : Framebuffer_Type;
 
-      min_h : pos32 := Config.LINEAR_FRAMEBUFFER_MAX_WIDTH;
-      min_v : pos32 := Config.LINEAR_FRAMEBUFFER_MAX_HEIGHT;
-
       fbinfo : Interfaces.C.int;
 
    begin
@@ -63,26 +60,19 @@ is
          HW.GFX.GMA.Display_Probing.Scan_Ports (configs, ports);
 
          if configs (Primary).Port /= Disabled then
-            for i in Pipe_Index loop
-               exit when configs (i).Port = Disabled;
-
-               min_h := pos32'min (min_h, configs (i).Mode.H_Visible);
-               min_v := pos32'min (min_v, configs (i).Mode.V_Visible);
-            end loop;
-
             fb := configs (Primary).Framebuffer;
             Screen_Rotation (fb.Rotation);
 
             if fb.Rotation = Rotated_90 or fb.Rotation = Rotated_270 then
-               fb.Width    := Width_Type (min_v);
-               fb.Height   := Height_Type (min_h);
+               fb.Width    := Width_Type (configs (Primary).Mode.V_Visible);
+               fb.Height   := Height_Type (configs (Primary).Mode.H_Visible);
                fb.Stride   := Div_Round_Up (fb.Width, 32) * 32;
                fb.V_Stride := Div_Round_Up (fb.Height, 32) * 32;
                fb.Tiling   := Y_Tiled;
                fb.Offset   := word32 (GTT_Rotation_Offset) * GTT_Page_Size;
             else
-               fb.Width    := Width_Type (min_h);
-               fb.Height   := Height_Type (min_v);
+               fb.Width    := configs (Primary).Mode.H_Visible;
+               fb.Height   := configs (Primary).Mode.V_Visible;
                fb.Stride   := Div_Round_Up (fb.Width, 16) * 16;
                fb.V_Stride := fb.Height;
             end if;
