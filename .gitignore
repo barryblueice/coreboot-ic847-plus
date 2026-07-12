@@ -1,7 +1,6 @@
 extended-junit.xml
 junit.xml
 abuild*.xml
-.config
 .config.old
 defconfig
 .coreboot-version
