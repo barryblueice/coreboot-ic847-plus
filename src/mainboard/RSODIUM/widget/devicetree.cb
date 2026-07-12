@@ -6,6 +6,42 @@ chip northbridge/intel/sandybridge
 	register "spd_addresses" = "{0x50, 0, 0x52, 0}"
 	register "max_mem_clock_mhz" = "800"
 
+	chip cpu/intel/model_206ax
+		# VR12 PSI phase-switching thresholds (light-load optimization).
+		# Keep all phases active until current drops below the listed threshold.
+		# Values match T420/T420s vendor BIOS; safe for any VR12 regulator.
+		register "pp0_psi[VR12_PSI2]" = "{VR12_ALL_PHASES, 5}"
+		register "pp0_psi[VR12_PSI3]" = "{VR12_ALL_PHASES, 1}"
+		register "pp1_psi[VR12_PSI2]" = "{VR12_ALL_PHASES, 5}"
+		register "pp1_psi[VR12_PSI3]" = "{VR12_ALL_PHASES, 1}"
+
+		# Package power limits (PL1/PL2).
+		# 0 = use CPU SKU TDP from MSR_PKG_POWER_SKU (recommended for a
+		# board supporting multiple CPU SKUs with different TDPs).
+		# Uncomment and adjust only when a fixed CPU is known:
+		#   e.g. 65 W CPU: pl1_mw = 65000, pl2_mw = 81250 (1.25 * PL1)
+		#   e.g. 35 W CPU: pl1_mw = 35000, pl2_mw = 43750
+		# register "pl1_mw" = "65000"
+		# register "pl2_mw" = "81250"
+
+		# CPU core (PP0) current limit in Amps.
+		# 0 = code default 112 A. Override only if VR is rated lower.
+		# register "pp0_current_limit" = "97"
+
+		# iGPU (PP1) current limit in Amps.
+		# 0 = code default 35 A (SNB) / 50 A (IVB).
+		# register "pp1_current_limit" = "32"
+
+		# TCC activation offset (degrees below TJ_Max before throttling).
+		# 0 = CPU default. Set from vendor BIOS if available.
+		# register "tcc_offset" = "3"
+
+		# Per-core Turbo ratio limits (0 = CPU hardware default, no override).
+		# Turbo is unconditionally enabled via configure_misc()/enable_turbo().
+
+		device cpu_cluster 0 on end
+	end
+
 	device domain 0 on
 		device ref host_bridge on end
 		device ref peg10 on end

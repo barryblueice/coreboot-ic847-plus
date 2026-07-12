@@ -368,14 +368,29 @@ static void northbridge_init(struct device *dev)
 	set_power_limits(28);
 
 	/*
-	 * CPUs with configurable TDP also need power limits set in MCHBAR.
-	 * Use the same values from MSR_PKG_POWER_LIMIT.
+	 * Mirror MSR_PKG_POWER_LIMIT to MCHBAR unconditionally.
+	 * Sandy Bridge PCU authorizes turbo transitions based on the MCHBAR
+	 * power limit registers (0x59a0/0x59a4), not the MSR alone. Without
+	 * writing these registers, PL2 remains disabled in MCHBAR and the PCU
+	 * will never grant requests above base clock, regardless of MSR values.
+	 * Configurable-TDP Ivy Bridge CPUs additionally require this for MCHBAR
+	 * power limit coordination.
 	 */
-	if (cpu_config_tdp_levels()) {
+	{
 		msr_t msr = rdmsr(MSR_PKG_POWER_LIMIT);
 		mchbar_write32(MCH_PKG_POWER_LIMIT_LO, msr.lo);
 		mchbar_write32(MCH_PKG_POWER_LIMIT_HI, msr.hi);
 	}
+
+	/*
+	 * Set bit 3 of BIOS_RESET_CPL to signal to the CPU PCU that all
+	 * power management programming (including turbo power limits) is
+	 * complete. Without this, Sandy Bridge PCU will not allow frequency
+	 * transitions above the base clock regardless of PL1/PL2 settings.
+	 * This fixes turbo boost on Sandy Bridge platforms (coreboot #439).
+	 */
+	mchbar_setbits8(BIOS_RESET_CPL, 1 << 3);
+	printk(BIOS_DEBUG, "Set BIOS_RESET_CPL bit3 (turbo power mgmt complete)\n");
 
 	/* Set here before graphics PM init */
 	mchbar_write32(PAVP_MSG, 0x00100001);

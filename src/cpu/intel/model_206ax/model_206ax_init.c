@@ -21,6 +21,8 @@
 #include <static.h>
 #include <types.h>
 
+static void set_max_ratio(void);
+
 /* Convert time in seconds to POWER_LIMIT_1_TIME MSR value */
 static const u8 power_limit_time_sec_to_msr[] = {
 	[0]   = 0x00,
@@ -353,10 +355,29 @@ static void configure_misc(void)
 {
 	msr_t msr;
 
+	/*
+	 * Clear FLEX_RATIO_EN if the flex ratio value is zero.
+	 * Some embedded/industrial Sandy Bridge CPUs (e.g. Core i5-2510E)
+	 * ship with FLEX_RATIO_EN=1 and ratio=0 as their manufacturing
+	 * default. The PCU interprets this as an unconfigured override and
+	 * locks all P-state transitions at base clock, preventing turbo even
+	 * when all other power management MSRs are correct.
+	 * Clearing FLEX_RATIO_EN restores normal hardware turbo behaviour.
+	 */
+	if (boot_cpu()) {
+		msr = rdmsr(MSR_FLEX_RATIO);
+		if ((msr.lo & FLEX_RATIO_EN) && !((msr.lo >> 8) & 0xff)) {
+			msr.lo &= ~FLEX_RATIO_EN;
+			wrmsr(MSR_FLEX_RATIO, msr);
+			printk(BIOS_DEBUG, "Cleared FLEX_RATIO_EN (ratio was 0)\n");
+		}
+	}
+
 	msr = rdmsr(IA32_MISC_ENABLE);
 	msr.lo |= (1 << 0);	  /* Fast String enable */
 	msr.lo |= (1 << 3);	  /* TM1/TM2/EMTTM enable */
 	msr.lo |= (1 << 16);	  /* Enhanced SpeedStep Enable */
+	msr.hi &= ~H_MISC_DISABLE_TURBO;	/* Ensure Turbo is enabled on this core */
 	wrmsr(IA32_MISC_ENABLE, msr);
 
 	/* Disable Thermal interrupts */
@@ -402,8 +423,9 @@ static void set_max_ratio(void)
 	}
 	wrmsr(IA32_PERF_CTL, perf_ctl);
 
-	printk(BIOS_DEBUG, "model_x06ax: frequency set to %d\n",
-	       ((perf_ctl.lo >> 8) & 0xff) * SANDYBRIDGE_BCLK);
+	if (boot_cpu())
+		printk(BIOS_DEBUG, "model_x06ax: frequency set to %d\n",
+		       ((perf_ctl.lo >> 8) & 0xff) * SANDYBRIDGE_BCLK);
 }
 
 unsigned int smbios_cpu_get_max_speed_mhz(void)
@@ -470,6 +492,9 @@ static void model_206ax_init(struct device *cpu)
 
 	/* Enable Turbo */
 	enable_turbo();
+
+	/* Request max (Turbo) ratio on each core */
+	set_max_ratio();
 }
 
 /* MP initialization support. */

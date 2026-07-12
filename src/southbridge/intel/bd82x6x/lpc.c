@@ -515,7 +515,20 @@ static void lpc_init(struct device *dev)
 		cpt_pm_init(dev);
 		break;
 	case PCH_TYPE_PPT: /* PantherPoint */
-		ppt_pm_init(dev);
+		/*
+		 * When a Sandy Bridge CPU is paired with a PantherPoint PCH
+		 * (e.g. C216/QS77), use CougarPoint-style PM init. The PPT PM
+		 * init sequence is designed for Ivy Bridge CPUs and programs
+		 * RCBA registers (including 0x33a4) that alter the PM_SYNC
+		 * protocol to v2. Sandy Bridge PCU only understands PM_SYNC v1
+		 * (CougarPoint native). Using the PPT sequence causes the Sandy
+		 * Bridge PCU to receive unrecognised PM_SYNC messages and fall
+		 * back to conservative mode, blocking all turbo transitions.
+		 */
+		if (is_sandybridge())
+			cpt_pm_init(dev);
+		else
+			ppt_pm_init(dev);
 		break;
 	default:
 		printk(BIOS_ERR, "Unknown Chipset: 0x%04x\n", dev->device);
