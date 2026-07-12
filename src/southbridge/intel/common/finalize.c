@@ -38,7 +38,34 @@ void intel_pch_finalize_smm(void)
 	pci_or_config8(lpc_dev, D31F0_GEN_PMCON_LOCK,
 		       ACPI_BASE_LOCK | SLP_STR_POL_LOCK);
 
-	pci_update_config32(lpc_dev, D31F0_ETR3, ~ETR3_CF9GR, ETR3_CF9LOCK);
+	/*
+	 * On this platform the ME is in an abnormal state (Manufacturing Mode,
+	 * fw_init_complete=0, EOP skipped). When the ME is present but not
+	 * fully initialised, a plain host reset (CF9=0x06) does not reset the
+	 * ME, and the ME mishandles the reset - on this board it powers the
+	 * platform down to G3 (like pulling the plug) instead of rebooting.
+	 *
+	 * Setting CF9GR (ETR3 bit 20) makes CF9 writes of 0x06 / 0x0e perform
+	 * a global reset of host AND ME together (see the i82801ix comment in
+	 * src/southbridge/intel/i82801ix/early_init.c: "Bit 20 activates global
+	 * reset of host and ME on cf9 writes of 0x6 and 0xe (required if ME is
+	 * disabled but present)"). That lets the abnormal ME reset cleanly and
+	 * return the platform to S0 instead of dropping to G3.
+	 *
+	 * Only do this when the ME is in manufacturing mode (HFSTS1[4]=1);
+	 * a normal ME keeps CF9GR cleared and locked as before.
+	 *
+	 * PCH_ME_DEV (0:16.0) HFSTS1 is at config offset 0x40, bit 4 is
+	 * mfg_mode - identical on ibexpeak/bd82x6x/lynxpoint.
+	 */
+	const u32 me_hfs = pci_read_config32(PCI_DEV(0, 0x16, 0), 0x40);
+	if (me_hfs & (1 << 4)) {
+		/* ME in manufacturing mode: enable host+ME global reset on CF9. */
+		pci_or_config32(lpc_dev, D31F0_ETR3, ETR3_CF9GR);
+		printk(BIOS_INFO, "ME in manufacturing mode: enabling CF9GR (global reset)\n");
+	} else {
+		pci_update_config32(lpc_dev, D31F0_ETR3, ~ETR3_CF9GR, ETR3_CF9LOCK);
+	}
 
 	if (CONFIG(SOUTHBRIDGE_INTEL_LYNXPOINT))
 		/* PMSYNC */

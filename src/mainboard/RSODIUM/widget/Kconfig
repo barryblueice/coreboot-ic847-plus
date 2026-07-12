@@ -16,6 +16,20 @@ config BOARD_SPECIFIC_OPTIONS
 	select GFX_GMA_IGNORE_PRESENCE_STRAPS
 	select MAINBOARD_USES_IFD_GBE_REGION
 	select HAVE_OPTION_TABLE
+	# Return to S0 (power on) after a G3/power-cycle event.
+	#
+	# The onboard ME is in an abnormal state (Manufacturing Mode, MFS
+	# failure, Recovery / Security Override via Jumper). In that state the
+	# ME escalates ordinary host resets into a global / "pseudo-global"
+	# reset that transitions the whole platform through Moff/G3. After that
+	# cycle, GEN_PMCON_3 bit0 (state-after-G3) decides S0 vs S5.
+	#
+	# If the default is "S5 off after G3" (and CMOS is invalid, so the
+	# runtime power_on_after_fail option falls back to this Kconfig
+	# default), the board stays in S5 and every reboot - including a
+	# firmware-internal one - ends as a shutdown. Defaulting to "on" makes
+	# the board come back to S0 after the ME's global reset.
+	select POWER_STATE_DEFAULT_ON_AFTER_FAILURE
 
 config MAINBOARD_DIR
 	default "RSODIUM/widget"
