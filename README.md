@@ -1,3 +1,5 @@
+**This is an UNOFFICIAL fork orginated from coreboot official!**
+
 coreboot README
 ===============
 
@@ -16,104 +18,6 @@ implementing firmware standards, like PC BIOS services or UEFI. This
 flexibility allows coreboot systems to include only the features
 necessary in the target application, reducing the amount of code and
 flash space required.
-
-
-Source code
------------
-
-All source code for coreboot is stored in git. It is downloaded with
-the command:
-
-`git clone https://review.coreboot.org/coreboot.git`.
-
-Code reviews are done in [the project's Gerrit
-instance](https://review.coreboot.org/).
-
-The code may be browsed via [coreboot's Gitiles
-instance](https://review.coreboot.org/plugins/gitiles/coreboot/+/HEAD).
-
-The coreboot project also maintains a
-[mirror](https://github.com/coreboot/coreboot) of the project on github.
-This is read-only, as coreboot does not accept github pull requests,
-but allows browsing and downloading the coreboot source.
-
-Payloads
---------
-
-After the basic initialization of the hardware has been performed, any
-desired "payload" can be started by coreboot.
-
-See <https://doc.coreboot.org/payloads.html> for a list of some of
-coreboot's supported payloads.
-
-
-Supported Hardware
-------------------
-
-The coreboot project supports a wide range of architectures, chipsets,
-devices, and mainboards. While not all of these are documented, you can
-find some information in the [Architecture-specific
-documentation](https://doc.coreboot.org/arch/index.html) or the
-[SOC-specific documentation](https://doc.coreboot.org/soc/index.html).
-
-For details about the specific mainboard devices that coreboot supports,
-please consult the [Mainboard-specific
-documentation](https://doc.coreboot.org/mainboard/index.html) or the
-[Board Status](https://coreboot.org/status/board-status.html) pages.
-
-
-Releases
---------
-
-Releases are currently done by coreboot every quarter. The
-release archives contain the entire coreboot codebase from the time of
-the release, along with any external submodules. The submodules
-containing binaries are separated from the general release archives. All
-of the packages required to build the coreboot toolchains are also kept
-at coreboot.org in case the websites change, or those specific packages
-become unavailable in the future.
-
-All releases are available on the [coreboot
-download](https://coreboot.org/downloads.html) page.
-
-Please note that the coreboot releases are best considered as snapshots
-of the codebase, and do not currently guarantee any sort of extra
-stability.
-
-Build Requirements and building coreboot
-----------------------------------------
-
-The coreboot build, associated utilities and payloads require many
-additional tools and packages to build. The actual coreboot binary is
-typically built using a coreboot-controlled toolchain to provide
-reproducibility across various platforms. It is also possible, though
-not recommended, to make it directly with your system toolchain.
-Operating systems and distributions come with an unknown variety of
-system tools and utilities installed. Because of this, it isn't
-reasonable to list all the required packages to do a build, but the
-documentation lists the requirements for a few different Linux
-distributions.
-
-To see the list of tools and libraries, along with a list of
-instructions to get started building coreboot, go to the [Starting from
-scratch](https://doc.coreboot.org/tutorial/part1.html) tutorial page.
-
-That same page goes through how to use QEMU to boot the build and see
-the output.
-
-
-Website and Mailing List
-------------------------
-
-Further details on the project, as well as links to documentation and
-more can be found on the coreboot website:
-
-  <https://www.coreboot.org>
-
-You can contact us directly on the coreboot mailing list:
-
-  <https://doc.coreboot.org/community/forums.html>
-
 
 
 Copyrights and Licenses
