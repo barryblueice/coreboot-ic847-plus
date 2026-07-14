@@ -1,5 +1,65 @@
 **This is an UNOFFICIAL fork orginated from coreboot official!**
 
+***
+
+Everything started with I got this strange but interesting board:
+
+<img width="731" height="480" alt="EF6A27DD692FC194CD9A6E87237D9208" src="https://github.com/user-attachments/assets/b4fef6cf-777c-499f-be23-6b90fcd5a802" />
+
+The motherboard model is IC847-PLUS. It looks like a graphic card, but actually it's a computer, running on Intel® Core Sandy Bridge/Ivy Bridge platform.
+
+The connector below PCB is used for PCIE out, in order to connect mining graphic card. About 8 PCIe 2.0 x1 lanes are routed out.
+
+This product is affordable and in high demand in China, with the majority of users leveraging it for NAS or Openwrt router.
+
+***
+
+### About coreboot
+
+This is an official release build and modified for IC847-PLUS.
+
+The UEFI payload is powered by EDKII.
+
+#### Known Issue:
+
+ - This board cannot reach turbo boost clocking, CPU can only run under basic frequency.
+
+I suspect that the power delivery scheme on this motherboard is locked, which prevents the CPU from requesting turbo boost.
+
+ - The SPI flash is too small (4MB) on board. If running coreboot need 8MB (64Mbit) or 16MB (128Mbit for debugging) to replace.
+
+### About PCIE lane combination:
+
+PCIe lanes can combine to x4 or x2 to achieve greater PCIe bandwidth.
+
+But the PCIE layout on IC847-PLUS is really weird. 1 lane from CPU, other 7 lanes are from chipset:
+
+<img width="439" height="854" alt="6a7cc4cee03d493cb70a7b36fad41cd6" src="https://github.com/user-attachments/assets/1c0b0fa3-5ea2-48d9-b419-7445b9950ff4" />
+
+and the last PCIE lane from chipset is for RTL8111.
+
+So the PCIE allocation on IC847-PLUS is only support 4+2+1+1, 4+1+1+1+1 or 8x1.
+
+The PCIE combination setting can be adjusted in Intel Flash Image Tool:
+
+<img width="800" height="613" alt="image" src="https://github.com/user-attachments/assets/25e07ab9-2af9-4c46-a61e-0ee3bf90e2ef" />
+
+<img width="442" height="180" alt="image" src="https://github.com/user-attachments/assets/1d89b514-9b75-4e16-b15d-9b604135f0f7" />
+
+### About Build:
+
+Default setting has uploaded.
+
+1. Clone the repository:
+```bash
+https://github.com/barryblueice/coreboot-ic847-plus.git
+```
+2. Build the BIOS under Linux:
+```bash
+cd coreboot-ic847-plus
+make -j$(nproc) 2>&1
+```
+
 coreboot README
 ===============
 
