@@ -46,6 +46,8 @@ The PCIE combination setting can be adjusted in Intel Flash Image Tool:
 
 <img width="442" height="180" alt="image" src="https://github.com/user-attachments/assets/1d89b514-9b75-4e16-b15d-9b604135f0f7" />
 
+Related PCIE layout and extension board by myself can be found on this project: [Oshwhub - The 3rd generation extension board for IC847-PLUS](https://oshwhub.com/barryblueice/project_gwkznlak)
+
 ### About Build:
 
 Default setting has uploaded.
