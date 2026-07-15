@@ -241,6 +241,18 @@ static void pch_pcie_enable(struct device *dev)
 	check_device_present(dev);
 
 	/*
+	 * Port 0 in x4 mode (PCIEPCS1=3) must remain enabled even
+	 * without a downstream device: its PHY/clock resources are
+	 * shared across the entire PCH PCIe complex.  Disabling it
+	 * kills the link on ports 4-7.
+	 */
+	if (PCI_FUNC(dev->path.pci.devfn) == 0 &&
+	    !dev->enabled && (RCBA32(RPC) & 3) == 3) {
+		dev->enabled = 1;
+		pci_and_config32(dev, 0x338, ~(1 << 26));
+	}
+
+	/*
 	 * Save a copy of the Root Port Function Number map when
 	 * starting to walk the list of PCIe Root Ports so it can
 	 * be updated locally and written out when the last port
@@ -256,7 +268,7 @@ static void pch_pcie_enable(struct device *dev)
 		if (!dev->enabled)
 			config->pcie_port_coalesce = true;
 
-		if (config->pcie_port_coalesce)
+		if (config->pcie_port_coalesce || config->pcie_port_coalesce_hi)
 			printk(BIOS_INFO,
 			       "PCH: PCIe Root Port coalescing is enabled\n");
 	}
@@ -270,23 +282,27 @@ static void pch_pcie_enable(struct device *dev)
 		 * If PCIe 0-3 disabled set Function 0 0xE2[0] = 1
 		 * If PCIe 4-7 disabled set Function 4 0xE2[0] = 1
 		 *
+		 * Skip clock gating when port 0 is x4 (PCIEPCS1=3):
+		 * the shared PCIe clock resource must remain active
+		 * or ports 4-7 lose their link too.
+		 *
 		 * This check is done here instead of PCIe driver
 		 * because the PCIe driver enable() handler is not
 		 * called unless the device is enabled.
 		 */
 		if ((PCI_FUNC(dev->path.pci.devfn) == 0 ||
 		     PCI_FUNC(dev->path.pci.devfn) == 4)) {
-			/* Handle workaround for PPT and CPT/B1+ */
-			if (pch_silicon_supported(PCH_TYPE_CPT, PCH_STEP_B1) &&
-			    !pch_pcie_check_set_enabled(dev)) {
-				pci_or_config8(dev, 0xe2, 1);
+			/* Skip clock gating when port 0/4 is in x4 mode */
+			if (!((PCI_FUNC(dev->path.pci.devfn) == 0 &&
+			      (RCBA32(RPC) & 3) == 3) ||
+			      (PCI_FUNC(dev->path.pci.devfn) == 4 &&
+			      ((RCBA32(RPC) >> 2) & 3) == 3))) {
+				if (pch_silicon_supported(PCH_TYPE_CPT, PCH_STEP_B1) &&
+				    !pch_pcie_check_set_enabled(dev)) {
+					pci_or_config8(dev, 0xe2, 1);
+				}
+				pci_write_config8(dev, 0xe1, 0x3c);
 			}
-
-			/*
-			 * Enable Clock Gating for shared PCIe resources
-			 * before disabling this particular port.
-			 */
-			pci_write_config8(dev, 0xe1, 0x3c);
 		}
 
 		/* Ensure memory, io, and bus master are all disabled */
@@ -304,16 +320,30 @@ static void pch_pcie_enable(struct device *dev)
 		/*
 		 * Check if there is a lower disabled port to swap with this
 		 * port in order to maintain linear order starting at zero.
+		 * Coalescing is applied per 4-port group:
+		 *   ports 0-3 use pcie_port_coalesce
+		 *   ports 4-7 use pcie_port_coalesce_hi
 		 */
-		if (config->pcie_port_coalesce) {
-			for (fn=0; fn < PCI_FUNC(dev->path.pci.devfn); fn++) {
-				if (!(new_rpfn & RPFN_HIDE(fn)))
-					continue;
+		{
+			int start_fn = 0;
+			bool do_coalesce = false;
+			int cur_fn = PCI_FUNC(dev->path.pci.devfn);
 
-				/* Swap places with this function */
-				pch_pcie_function_swap(
-					PCI_FUNC(dev->path.pci.devfn), fn);
-				break;
+			if (cur_fn < 4) {
+				do_coalesce = config->pcie_port_coalesce;
+				start_fn = 0;
+			} else {
+				do_coalesce = config->pcie_port_coalesce_hi;
+				start_fn = 4;
+			}
+			if (do_coalesce) {
+				for (fn = start_fn; fn < cur_fn; fn++) {
+					if (!(new_rpfn & RPFN_HIDE(fn)))
+						continue;
+
+					pch_pcie_function_swap(cur_fn, fn);
+					break;
+				}
 			}
 		}
 
@@ -330,8 +360,8 @@ static void pch_pcie_enable(struct device *dev)
 		       RCBA32(RPFN), new_rpfn);
 		RCBA32(RPFN) = new_rpfn;
 
-		/* Update static devictree with new function numbers */
-		if (config->pcie_port_coalesce)
+		/* Update static devicetree with new function numbers */
+		if (config->pcie_port_coalesce || config->pcie_port_coalesce_hi)
 			pch_pcie_devicetree_update(config);
 	}
 }

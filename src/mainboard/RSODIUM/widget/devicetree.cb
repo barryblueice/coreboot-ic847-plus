@@ -55,6 +55,7 @@ chip northbridge/intel/sandybridge
 			register "superspeed_capable_ports" = "0x0f"
 
 			register "pcie_port_coalesce" = "true"
+			register "pcie_port_coalesce_hi" = "false"
 
 			register "spi_uvscc" = "0x2005"
 			register "spi_lvscc" = "0x00802005"
@@ -88,14 +89,14 @@ chip northbridge/intel/sandybridge
 			device ref sata1 on end
 			device ref sata2 off end
 
-			device ref pcie_rp1 on end
-			device ref pcie_rp2 on end
-			device ref pcie_rp3 on end
-			device ref pcie_rp4 on end
-			device ref pcie_rp5 on end
-			device ref pcie_rp6 on end
-			device ref pcie_rp7 on end
-			device ref pcie_rp8 on end
+			device ref pcie_rp1 on end	# PCIe x4 (PCIEPCS1=3)
+			device ref pcie_rp2 off end	# Lane merged into port 1
+			device ref pcie_rp3 off end	# Lane merged into port 1
+			device ref pcie_rp4 off end	# Lane merged into port 1
+			device ref pcie_rp5 on end	# x1
+			device ref pcie_rp6 on end	# x1
+			device ref pcie_rp7 on end	# x1
+			device ref pcie_rp8 on end	# x1
 
 			device ref ehci1 on end
 			device ref pci_bridge off end

@@ -61,6 +61,8 @@ struct southbridge_intel_bd82x6x_config {
 
 	/* Enable linear PCIe Root Port function numbers starting at zero */
 	bool pcie_port_coalesce;
+	/* PCIe Root Port coalescing for ports 4-7 */
+	bool pcie_port_coalesce_hi;
 
 	/* Override PCIe ASPM */
 	uint8_t pcie_aspm[8];
