@@ -31,6 +31,7 @@ The non-turbo boost bug will effect ICS67-2000 version (UP1625P), another versio
 
 ### About PCIE lane combination:
 
+
 PCIe lanes can combine to x4 or x2 to achieve greater PCIe bandwidth.
 
 But the PCIE layout on IC847-PLUS is really weird. 1 lane from CPU, other 7 lanes are from chipset:
@@ -47,6 +48,9 @@ The PCIE combination setting can be adjusted in Intel Flash Image Tool:
 
 <img width="442" height="180" alt="image" src="https://github.com/user-attachments/assets/1d89b514-9b75-4e16-b15d-9b604135f0f7" />
 
+> [!IMPORTANT]  
+> MFIT only change PCIE allocation in descriptor. If you want to modify PCIE allocation setting, coreboot source code also need to be modified!
+
 Related PCIE layout and extension board by myself can be found on this project: [Oshwhub - The 3rd generation extension board for IC847-PLUS](https://oshwhub.com/barryblueice/project_gwkznlak)
 
 ### About Build:
@@ -60,10 +64,17 @@ https://github.com/barryblueice/coreboot-ic847-plus.git
 2. Build the BIOS under Linux:
 ```bash
 cd coreboot-ic847-plus
-make -j$(nproc) 2>&1
+make -j$(nproc)
 ```
 
 ### About flashing:
+
+> [!WARNING]
+> SPI flash need to replace with 16MB SPI flash first!<br>Recommanded SPI flash part number (supported by default):
+> - W25Q128_V - EF 40 18
+> - MX25L12805D - C2 20 18
+> - GD25Q128 - C8 40 18
+> If used unsupported SPI flash, the BIOS may boot fail.
 
 #### Flashing by Intel CSME:
 
@@ -71,7 +82,7 @@ make -j$(nproc) 2>&1
 
 2. Open Powershell / cmd in this folder with Administrator privileges.
 
-3. Backup /Flash the BIOS with command:
+3. Backup Flash the BIOS with command:
 
 ```bash
 #Backup BIOS:
@@ -84,6 +95,8 @@ make -j$(nproc) 2>&1
 #### Flashing SPI flash directly:
 
 Using CH341A or similar SPI programmer to flash BIOS. The SPI flash is under MSATA slot.
+
+<img width="1080" height="1920" alt="5a906e2ce173878cdb588b9117ee1f35_720" src="https://github.com/user-attachments/assets/485a7181-b622-4bf0-ac06-0be4912192dc" />
 
 coreboot README
 ===============
