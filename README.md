@@ -24,7 +24,8 @@ The UEFI payload is powered by EDKII.
 
  - This board cannot reach turbo boost clocking, CPU can only run under basic frequency.
 
-I suspect that the power delivery scheme on this motherboard is locked, which prevents the CPU from requesting turbo boost.
+I suspect that the power delivery scheme on this motherboard is locked, which prevents the CPU from requesting turbo boost.<br>
+The non-turbo boost bug will effect ICS67-2000 version (UP1625P), another version IC847-PLUS (RT8859M) can trigger turbo boost.
 
  - The SPI flash is too small (4MB) on board. If running coreboot need 8MB (64Mbit) or 16MB (128Mbit for debugging) to replace.
 
@@ -61,6 +62,28 @@ https://github.com/barryblueice/coreboot-ic847-plus.git
 cd coreboot-ic847-plus
 make -j$(nproc) 2>&1
 ```
+
+### About flashing:
+
+#### Flashing by Intel CSME:
+
+1. Open `Intel ME System Tools v8 r3` -> `Flash Programming Tool`.
+
+2. Open Powershell / cmd in this folder with Administrator privileges.
+
+3. Backup /Flash the BIOS with command:
+
+```bash
+#Backup BIOS:
+.\\fptw64.exe -d backup.bin
+
+# Flashing BIOS:
+.\\fptw64.exe -f coreboot.rom
+```
+
+#### Flashing SPI flash directly:
+
+Using CH341A or similar SPI programmer to flash BIOS. The SPI flash is under MSATA slot.
 
 coreboot README
 ===============
