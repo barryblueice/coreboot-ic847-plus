@@ -49,9 +49,10 @@ The PCIE combination setting can be adjusted in Intel Flash Image Tool:
 <img width="442" height="180" alt="image" src="https://github.com/user-attachments/assets/1d89b514-9b75-4e16-b15d-9b604135f0f7" />
 
 > [!IMPORTANT]  
-> MFIT only change PCIE allocation in descriptor. If you want to modify PCIE allocation setting, coreboot source code also need to be modified!
+> MFIT only change PCIE allocation in descriptor. If you want to modify PCIE allocation setting, coreboot source code also need to be modified!<br>
+> If only one of them is modified, the PCIE device will not be enumerated.
 
-Related PCIE layout and extension board by myself can be found on this project: [Oshwhub - The 3rd generation extension board for IC847-PLUS](https://oshwhub.com/barryblueice/project_gwkznlak)
+Related PCIE layout and extension board by myself can be found in this project: [Oshwhub - The 3rd generation extension board for IC847-PLUS](https://oshwhub.com/barryblueice/project_gwkznlak)
 
 ### About Build:
 
