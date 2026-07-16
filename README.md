@@ -75,7 +75,7 @@ make -j$(nproc)
 > - W25Q128_V - EF 40 18
 > - MX25L12805D - C2 20 18
 > - GD25Q128 - C8 40 18
-> If used unsupported SPI flash, the BIOS may boot fail.
+> <br>If used unsupported SPI flash, the BIOS may boot fail.
 
 #### Flashing by Intel CSME:
 
