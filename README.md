@@ -29,8 +29,9 @@ The non-turbo boost bug will effect ICS67-2000 version (UP1625P), another versio
 
  - The SPI flash is too small (4MB) on board. If running coreboot need 8MB (64Mbit) or 16MB (128Mbit for debugging) to replace.
 
-### About PCIE lane combination:
+ - Current coreboot BIOS only support Intel integrated GPU, discrete GPU will return code 43.
 
+### About PCIE lane combination:
 
 PCIe lanes can combine to x4 or x2 to achieve greater PCIe bandwidth.
 
@@ -48,7 +49,7 @@ The PCIE combination setting can be adjusted in Intel Flash Image Tool:
 
 <img width="442" height="180" alt="image" src="https://github.com/user-attachments/assets/1d89b514-9b75-4e16-b15d-9b604135f0f7" />
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > MFIT only change PCIE allocation in descriptor. If you want to modify PCIE allocation setting, coreboot source code also need to be modified!<br>
 > If only one of them is modified, the PCIE device will not be enumerated.
 
